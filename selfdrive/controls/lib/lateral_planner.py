@@ -89,10 +89,13 @@ class LateralPlanner():
     self.lane_change_adjust_vel = [8.3, 16, 22, 30]
     self.lane_change_adjust_new = 0.0
 
+    self.new_steer_actuator_delay = CP.steerActuatorDelay
+
     self.standstill_elapsed_time = 0.0
     self.v_cruise_kph = 0
     self.stand_still = False
     
+    self.steeringAngleDeg = 0.0
     self.output_scale = 0.0
 
   def setup_mpc(self):
@@ -107,7 +110,7 @@ class LateralPlanner():
     self.cur_state[0].curvature = 0.0
 
     self.desired_curvature = 0.0
-    self.safe_desired_curvature = 0.0
+    self.safe_desired_curvature = 0.0 
     self.desired_curvature_rate = 0.0
     self.safe_desired_curvature_rate = 0.0
 
@@ -127,6 +130,7 @@ class LateralPlanner():
     v_ego = sm['carState'].vEgo
     active = sm['controlsState'].active
     measured_curvature = sm['controlsState'].curvature
+    self.steeringAngleDeg = float(sm['carState'].steeringAngleDeg)
 
     md = sm['modelV2']
     self.LP.parse_model(sm['modelV2'], sm, v_ego)
@@ -245,8 +249,13 @@ class LateralPlanner():
     self.cur_state.psi = 0.0
     self.cur_state.curvature = interp(DT_MDL, self.t_idxs[:MPC_N + 1], self.mpc_solution.curvature)
 
+    self.model_speed = interp(abs(measured_curvature), [0.0, 0.0002, 0.00074, 0.0025, 0.008, 0.02], [180, 160, 130, 90, 60, 20])
     # TODO this needs more thought, use .2s extra for now to estimate other delays
-    delay = CP.steerActuatorDelay + .2
+    #delay = CP.steerActuatorDelay + .2
+    delay = interp(self.model_speed, [30,100,255], [CP.steerActuatorDelay + .15, CP.steerActuatorDelay + .20, CP.steerActuatorDelay + .25])
+    #delay = interp(abs(self.steeringAngleDeg), [50,10,0], [CP.steerActuatorDelay + .10, CP.steerActuatorDelay + .20, CP.steerActuatorDelay + .25])
+
+    self.new_steer_actuator_delay = delay
     current_curvature = self.mpc_solution.curvature[0]
     psi = interp(delay, self.t_idxs[:MPC_N + 1], self.mpc_solution.psi)
     next_curvature_rate = self.mpc_solution.curvature_rate[0]
@@ -303,6 +312,8 @@ class LateralPlanner():
     plan_send.lateralPlan.desire = self.desire
     plan_send.lateralPlan.laneChangeState = self.lane_change_state
     plan_send.lateralPlan.laneChangeDirection = self.lane_change_direction
+    
+    plan_send.lateralPlan.steerActuatorDelay = float(self.new_steer_actuator_delay)
 
     plan_send.lateralPlan.steerRateCost = float(self.steer_rate_cost)
     plan_send.lateralPlan.outputScale = float(self.output_scale)

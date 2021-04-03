@@ -49,6 +49,7 @@ keys = {
   b"IsTakingSnapshot": [TxType.CLEAR_ON_MANAGER_START],
   b"IsUpdateAvailable": [TxType.CLEAR_ON_MANAGER_START],
   b"IsUploadRawEnabled": [TxType.PERSISTENT],
+  b"LaneChangeEnabled": [TxType.PERSISTENT],
   b"LastAthenaPingTime": [TxType.PERSISTENT],
   b"LastGPSPosition": [TxType.PERSISTENT],
   b"LastUpdateException": [TxType.PERSISTENT],

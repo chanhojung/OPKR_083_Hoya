@@ -156,7 +156,7 @@ class Spdctrl(SpdController):
             self.cut_in = False
             if dRel >= 50:
                 self.seq_step_debug = "정차차량 감속"
-                lead_wait_cmd, lead_set_speed = self.get_tm_speed(CS, 8, -10)
+                lead_wait_cmd, lead_set_speed = self.get_tm_speed(CS, 8, -15)
             elif dRel >= 30:
                 self.seq_step_debug = "정차차량 감속"
                 lead_wait_cmd, lead_set_speed = self.get_tm_speed(CS, 20, -10)
@@ -250,15 +250,15 @@ class Spdctrl(SpdController):
                 self.seq_step_debug = "커브감속-4"
                 wait_time_cmd = 10
             elif model_speed < 70 and CS.clu_Vanz > 40 and CS.lead_distance >= 15:
-                set_speed = self.cruise_set_speed_kph - int(CS.clu_Vanz * 0.15)
+                set_speed = self.cruise_set_speed_kph - int(CS.clu_Vanz * 0.2)
                 self.seq_step_debug = "커브감속-3"
                 wait_time_cmd = 10
             elif model_speed < 80 and CS.clu_Vanz > 40 and CS.lead_distance >= 15:
-                set_speed = self.cruise_set_speed_kph - int(CS.clu_Vanz * 0.1)
+                set_speed = self.cruise_set_speed_kph - int(CS.clu_Vanz * 0.15)
                 self.seq_step_debug = "커브감속-2"
                 wait_time_cmd = 10
             elif model_speed < 90 and CS.clu_Vanz > 40 and CS.lead_distance >= 15:
-                set_speed = self.cruise_set_speed_kph - int(CS.clu_Vanz * 0.05)
+                set_speed = self.cruise_set_speed_kph - int(CS.clu_Vanz * 0.1)
                 self.seq_step_debug = "커브감속-1"
                 wait_time_cmd = 10
 
