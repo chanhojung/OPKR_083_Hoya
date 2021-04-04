@@ -428,20 +428,20 @@ class Controls:
     live_sr = Params().get('OpkrLiveSteerRatio') == b'1'
 
     if not live_sr:
-      self.model_speed = interp(abs(lat_plan.vCurvature), [0.0, 0.0002, 0.0005, 0.001, 0.008, 0.02], [200, 180, 140, 100, 60, 30])
-      self.new_steerRatio = interp(self.model_speed, [100, 30], self.steerRatio_range)
-      # angle_diff = abs(anglesteer_desire) - abs(anglesteer_current)
-      # if abs(output_scale) >= 1 and CS.vEgo > 8:
-      #   self.new_steerRatio_prev = interp(angle_diff, self.angle_differ_range, self.steerRatio_range)
-      #   if self.new_steerRatio_prev > self.new_steerRatio:
-      #     self.new_steerRatio = self.new_steerRatio_prev
-      # else:
-      #   self.mpc_frame += 1
-      #   if self.mpc_frame % 100 == 0:
-      #     self.new_steerRatio -= 0.1
-      #     if self.new_steerRatio <= self.CP.steerRatio:
-      #       self.new_steerRatio = self.CP.steerRatio
-      #     self.mpc_frame = 0
+      # self.model_speed = interp(abs(lat_plan.vCurvature), [0.0, 0.0002, 0.0005, 0.001, 0.008, 0.02], [200, 180, 140, 100, 60, 30])
+      # self.new_steerRatio = interp(self.model_speed, [100, 30], self.steerRatio_range)
+      angle_diff = abs(anglesteer_desire) - abs(anglesteer_current)
+      if abs(output_scale) >= 1 and CS.vEgo > 8:
+        self.new_steerRatio_prev = interp(angle_diff, self.angle_differ_range, self.steerRatio_range)
+        if self.new_steerRatio_prev > self.new_steerRatio:
+          self.new_steerRatio = self.new_steerRatio_prev
+      else:
+        self.mpc_frame += 1
+        if self.mpc_frame % 100 == 0:
+          self.new_steerRatio -= 0.1
+          if self.new_steerRatio <= self.CP.steerRatio:
+            self.new_steerRatio = self.CP.steerRatio
+          self.mpc_frame = 0
 
     # Update VehicleModel
     params = self.sm['liveParameters']
