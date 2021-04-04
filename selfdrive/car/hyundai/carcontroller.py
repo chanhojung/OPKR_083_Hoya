@@ -206,7 +206,7 @@ class CarController():
 
     #self.model_speed = 255 - self.SC.calc_va(sm, CS.out.vEgo)
     #atom model_speed
-    self.model_speed = self.SC.cal_model_speed(sm, CS.out.vEgo)
+    #self.model_speed = self.SC.cal_model_speed(sm, CS.out.vEgo)
     #self.curve_speed = self.SC.cal_curve_speed(sm, CS.out.vEgo, frame)
 
     plan = sm['longitudinalPlan']
@@ -225,9 +225,9 @@ class CarController():
     self.outScale = lateral_plan.outputScale
     self.vCruiseSet = lateral_plan.vCruiseSet
     
-    #self.steeringAngleDeg = CS.steeringAngleDeg
-
-    self.model_speed = interp(abs(lateral_plan.vCurvature), [0.0, 0.0002, 0.00074, 0.0025, 0.008, 0.02], [180, 160, 130, 90, 60, 20])
+    self.model_speed = interp(abs(lateral_plan.vCurvature), [0.0002, 0.01], [255, 30])
+    #Hoya
+    self.model_speed = interp(abs(lateral_plan.vCurvature), [0.0, 0.0002, 0.00074, 0.0025, 0.008, 0.02], [255, 255, 130, 90, 60, 20])
 
     if CS.out.vEgo > 8:
       if self.variable_steer_max:
