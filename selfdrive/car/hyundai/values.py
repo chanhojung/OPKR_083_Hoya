@@ -640,4 +640,4 @@ DBC = {
   CAR.SELTOS: dbc_dict('hyundai_kia_generic', None),
 }
 
-STEER_THRESHOLD = 90
+STEER_THRESHOLD = 60
