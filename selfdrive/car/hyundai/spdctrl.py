@@ -155,6 +155,10 @@ class Spdctrl(SpdController):
         elif 20 <= dRel < 149 and lead_objspd < -30 and not self.map_decel_only: #정지 차량 및 급감속 차량 발견 시
             self.cut_in = False
             self.seq_step_debug = "정차차량 급감속"
+            lead_wait_cmd, lead_set_speed = self.get_tm_speed(CS, 5, -30)
+        elif 20 <= dRel < 149 and lead_objspd < -20 and not self.map_decel_only: #정지 차량 및 급감속 차량 발견 시
+            self.cut_in = False
+            self.seq_step_debug = "정차차량 급감속"
             lead_wait_cmd, lead_set_speed = self.get_tm_speed(CS, 5, -20)
         elif 20 <= dRel < 149 and lead_objspd < -15 and not self.map_decel_only: #정지 차량 및 급감속 차량 발견 시
             self.cut_in = False
