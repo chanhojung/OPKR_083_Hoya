@@ -21,9 +21,9 @@ int main(int argc, char *argv[]) {
 
   QPushButton *btn = new QPushButton();
 #ifdef __aarch64__
-  btn->setText("GitReset");
+  btn->setText("MixPlorer");
   QObject::connect(btn, &QPushButton::released, [=]() {
-    QProcess::execute("/data/openpilot/git_reset.sh");
+    QProcess::execute("/data/openpilot/run_mixplorer.sh");
     //Hardware::reboot();
   });
 #else
