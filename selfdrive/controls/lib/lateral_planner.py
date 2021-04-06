@@ -247,14 +247,16 @@ class LateralPlanner():
     if self.laneless_mode_at_stopping_timer > 0:
       self.laneless_mode_at_stopping_timer -= 1
 
-    y_pts = np.interp(v_ego * self.t_idxs[:MPC_N + 1], np.linalg.norm(d_path_xyz, axis=1), d_path_xyz[:,1])
-    heading_pts = np.interp(v_ego * self.t_idxs[:MPC_N + 1], np.linalg.norm(self.path_xyz, axis=1), self.plan_yaw)
+    v_ego_mpc = max( v_ego, 5.0) # avoid mpc roughness due to low speed
+
+    y_pts = np.interp(v_ego_mpc * self.t_idxs[:MPC_N + 1], np.linalg.norm(d_path_xyz, axis=1), d_path_xyz[:,1])
+    heading_pts = np.interp(v_ego_mpc * self.t_idxs[:MPC_N + 1], np.linalg.norm(self.path_xyz, axis=1), self.plan_yaw)
     self.y_pts = y_pts
 
     assert len(y_pts) == MPC_N + 1
     assert len(heading_pts) == MPC_N + 1
     self.libmpc.run_mpc(self.cur_state, self.mpc_solution,
-                        float(v_ego),
+                        float(v_ego_mpc),
                         CAR_ROTATION_RADIUS,
                         list(y_pts),
                         list(heading_pts))
@@ -264,11 +266,10 @@ class LateralPlanner():
     self.cur_state.psi = 0.0
     self.cur_state.curvature = interp(DT_MDL, self.t_idxs[:MPC_N + 1], self.mpc_solution.curvature)
 
-    self.model_speed = interp(abs(measured_curvature), [0.0, 0.0002, 0.00074, 0.0025, 0.008, 0.02], [180, 160, 130, 90, 60, 20])
+    #self.model_speed = interp(abs(measured_curvature), [0.0, 0.0002, 0.00074, 0.0025, 0.008, 0.02], [180, 160, 130, 90, 60, 20])
     # TODO this needs more thought, use .2s extra for now to estimate other delays
-    #delay = CP.steerActuatorDelay + .2
-    delay = interp(self.model_speed, [30,100,255], [CP.steerActuatorDelay + .15, CP.steerActuatorDelay + .20, CP.steerActuatorDelay + .25])
-    #delay = interp(abs(self.steeringAngleDeg), [50,10,0], [CP.steerActuatorDelay + .10, CP.steerActuatorDelay + .20, CP.steerActuatorDelay + .25])
+    delay = CP.steerActuatorDelay + .2
+    #delay = interp(self.model_speed, [30,100,255], [CP.steerActuatorDelay + .15, CP.steerActuatorDelay + .20, CP.steerActuatorDelay + .25])
 
     self.new_steer_actuator_delay = delay
     current_curvature = self.mpc_solution.curvature[0]
