@@ -322,7 +322,7 @@ class LateralPlanner():
     mpc_nans = any(math.isnan(x) for x in self.mpc_solution.curvature)
     t = sec_since_boot()
     if mpc_nans:
-      self.libmpc.init(MPC_COST_LAT.PATH, MPC_COST_LAT.HEADING, CP.steerRateCost)
+      self.libmpc.init() # MPC_COST_LAT.PATH, MPC_COST_LAT.HEADING, CP.steerRateCost)
       self.cur_state.curvature = measured_curvature
 
       if t > self.last_cloudlog_t + 5.0:
