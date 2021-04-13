@@ -295,7 +295,7 @@ class LateralPlanner():
 
     #self.model_speed = interp(abs(measured_curvature), [0.0, 0.0002, 0.00074, 0.0025, 0.008, 0.02], [180, 160, 130, 90, 60, 20])
     # TODO this needs more thought, use .2s extra for now to estimate other delays
-    delay = CP.steerActuatorDelay + .2
+    delay = CP.steerActuatorDelay # + .2
     #delay = interp(self.model_speed, [30,100,255], [CP.steerActuatorDelay + .15, CP.steerActuatorDelay + .20, CP.steerActuatorDelay + .25])
 
     self.new_steer_actuator_delay = delay
